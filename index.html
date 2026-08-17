@@ -61,12 +61,12 @@ html, body { background: var(--dark-bg); color: #fff; font-family: 'Rajdhani', s
 .video-placeholder .stream-text { margin-top: 15px; font-family: 'Orbitron', monospace; font-size: 1rem; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
 .video-placeholder .stream-sub { margin-top: 6px; font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: rgba(255,255,255,0.4); }
 
-/* ZOOM */
-.zoom-controls { position: absolute; bottom: 12px; right: 12px; display: flex; gap: 6px; z-index: 10; }
+/* ZOOM - MOVED BELOW VIDEO */
+.zoom-bar { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 15px; background: rgba(0,0,0,0.6); border-top: 1px solid rgba(0,240,255,0.1); }
 .zoom-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(0,0,0,0.75); border: 1px solid rgba(0,240,255,0.25); color: var(--neon-cyan); font-family: 'Orbitron', monospace; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; backdrop-filter: blur(8px); }
 .zoom-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
-.zoom-level { width: 46px; height: 36px; border-radius: 8px; background: rgba(0,0,0,0.75); border: 1px solid rgba(0,240,255,0.25); color: var(--neon-cyan); font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-.fullscreen-btn { position: absolute; bottom: 12px; left: 12px; width: 36px; height: 36px; border-radius: 8px; background: rgba(0,0,0,0.75); border: 1px solid rgba(0,240,255,0.25); color: var(--neon-cyan); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; backdrop-filter: blur(8px); z-index: 10; }
+.zoom-level { width: 50px; height: 36px; border-radius: 8px; background: rgba(0,0,0,0.75); border: 1px solid rgba(0,240,255,0.25); color: var(--neon-cyan); font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+.fullscreen-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(0,0,0,0.75); border: 1px solid rgba(0,240,255,0.25); color: var(--neon-cyan); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; backdrop-filter: blur(8px); }
 .fullscreen-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
 
 /* CHANNELS */
@@ -83,16 +83,36 @@ html, body { background: var(--dark-bg); color: #fff; font-family: 'Rajdhani', s
 .category-btn .cat-name { font-family: 'Orbitron', monospace; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; }
 .category-btn .cat-count { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.4); }
 
-/* SUB */
-.sub-channel-section { margin-top: 12px; padding: 12px; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid rgba(0,240,255,0.1); animation: slideDown 0.3s ease; }
-@keyframes slideDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
-.sub-title { font-family: 'Orbitron', monospace; font-size: 0.75rem; color: var(--neon-orange); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
-.sub-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-.sub-btn { padding: 12px 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; color: #fff; cursor: pointer; transition: all 0.3s; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.sub-btn:hover { border-color: var(--neon-green); background: rgba(0,255,136,0.06); transform: translateY(-2px); }
-.sub-btn .sub-icon { font-size: 1.4rem; }
-.sub-btn .sub-name { font-family: 'Rajdhani', sans-serif; font-size: 0.8rem; font-weight: 700; }
-.sub-btn .sub-quality { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: var(--neon-green); }
+/* POPUP MODAL */
+.popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 15px; }
+.popup-overlay.active { display: flex; }
+.popup-box { background: linear-gradient(135deg, #0a0a12, #12121f); border: 1px solid rgba(0,240,255,0.2); border-radius: 20px; width: 100%; max-width: 420px; padding: 25px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+.popup-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink)); }
+@keyframes popIn { from { opacity: 0; transform: scale(0.85) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.popup-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.popup-title { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: var(--neon-cyan); text-shadow: 0 0 10px rgba(0,240,255,0.3); }
+.popup-close { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,0,51,0.15); border: 1px solid var(--neon-red); color: var(--neon-red); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+.popup-close:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 15px var(--neon-red); }
+.popup-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.popup-btn { padding: 14px 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: #fff; cursor: pointer; transition: all 0.3s; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.popup-btn:hover { border-color: var(--neon-green); background: rgba(0,255,136,0.08); transform: translateY(-2px); box-shadow: 0 0 20px rgba(0,255,136,0.1); }
+.popup-btn .pop-icon { font-size: 1.5rem; }
+.popup-btn .pop-name { font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 700; }
+.popup-btn .pop-quality { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: var(--neon-green); }
+
+/* TELEGRAM POPUP */
+.tg-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); z-index: 10001; display: none; align-items: center; justify-content: center; padding: 15px; }
+.tg-popup-overlay.active { display: flex; }
+.tg-popup-box { background: linear-gradient(135deg, #0a0a12, #12121f); border: 1px solid rgba(0,136,204,0.3); border-radius: 20px; width: 100%; max-width: 380px; padding: 30px 25px; text-align: center; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+.tg-popup-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #0088cc, #00f0ff); }
+.tg-icon-big { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #0088cc, #00f0ff); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 15px; box-shadow: 0 0 30px rgba(0,136,204,0.4); animation: tgPulse 2s infinite; }
+@keyframes tgPulse { 0%,100%{box-shadow:0 0 30px rgba(0,136,204,0.4)} 50%{box-shadow:0 0 50px rgba(0,136,204,0.7)} }
+.tg-popup-title { font-family: 'Orbitron', monospace; font-size: 1.3rem; color: #fff; margin-bottom: 8px; }
+.tg-popup-desc { font-family: 'Rajdhani', sans-serif; font-size: 0.95rem; color: rgba(255,255,255,0.6); margin-bottom: 20px; line-height: 1.5; }
+.tg-join-btn { display: block; width: 100%; padding: 14px; background: linear-gradient(135deg, #0088cc, #005580); border: 2px solid rgba(0,240,255,0.3); border-radius: 12px; color: #fff; font-family: 'Orbitron', monospace; font-size: 0.9rem; font-weight: 700; text-decoration: none; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; transition: all 0.3s; cursor: pointer; }
+.tg-join-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,136,204,0.4); border-color: var(--neon-cyan); }
+.tg-skip-btn { display: block; width: 100%; padding: 12px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: rgba(255,255,255,0.4); font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; }
+.tg-skip-btn:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.7); }
 
 /* FOOTER */
 .footer { padding: 18px 15px; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.9)); border-top: 1px solid rgba(255,255,255,0.04); margin-top: 15px; }
@@ -120,7 +140,7 @@ html, body { background: var(--dark-bg); color: #fff; font-family: 'Rajdhani', s
 /* RESPONSIVE */
 @media (max-width: 400px) {
   .category-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .sub-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .popup-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .telegram-btn { font-size: 0.8rem; padding: 10px 18px; }
   .category-btn { padding: 12px 8px; }
   .category-btn .cat-icon { width: 38px; height: 38px; font-size: 1.3rem; }
@@ -137,6 +157,28 @@ html, body { background: var(--dark-bg); color: #fff; font-family: 'Rajdhani', s
   <div class="loading-text">CONNECTING STREAM...</div>
 </div>
 
+<!-- POPUP MODAL -->
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup(event)">
+  <div class="popup-box" onclick="event.stopPropagation()">
+    <div class="popup-header">
+      <div class="popup-title" id="popupTitle">SELECT PLAYER</div>
+      <button class="popup-close" onclick="closePopup()">✕</button>
+    </div>
+    <div class="popup-grid" id="popupGrid"></div>
+  </div>
+</div>
+
+<!-- TELEGRAM POPUP -->
+<div class="tg-popup-overlay" id="tgPopupOverlay">
+  <div class="tg-popup-box">
+    <div class="tg-icon-big">✈️</div>
+    <div class="tg-popup-title">Join @MSD-cricketlinks</div>
+    <div class="tg-popup-desc">Get instant match updates, live links & exclusive content directly on Telegram!</div>
+    <a href="https://t.me/MSD-cricketlinks" target="_blank" class="tg-join-btn" onclick="closeTgPopup()">Join Channel Now</a>
+    <button class="tg-skip-btn" onclick="closeTgPopup()">I've Already Joined</button>
+  </div>
+</div>
+
 <div class="main-container">
 
   <!-- TOP BAR -->
@@ -151,9 +193,9 @@ html, body { background: var(--dark-bg); color: #fff; font-family: 'Rajdhani', s
 
   <!-- TELEGRAM -->
   <div class="telegram-section">
-    <a href="https://t.me/MSD_matchlinks" target="_blank" class="telegram-btn">
+    <a href="https://t.me/MSD-cricketlinks" target="_blank" class="telegram-btn">
       <span class="telegram-icon">✈️</span>
-      <span class="telegram-text">Join @MSD-matchlinks</span>
+      <span class="telegram-text">Join @MSD-cricketlinks</span>
     </a>
   </div>
 
@@ -166,20 +208,21 @@ html, body { background: var(--dark-bg); color: #fff; font-family: 'Rajdhani', s
         <div class="stream-sub">MSD MATCH LINKS — HD STREAMING</div>
       </div>
     </div>
-    <div class="zoom-controls">
-      <button class="zoom-btn" onclick="zoomOut()">−</button>
+    <!-- ZOOM BAR - BELOW VIDEO -->
+    <div class="zoom-bar">
+      <button class="fullscreen-btn" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
+      <div style="flex:1"></div>
+      <button class="zoom-btn" onclick="zoomOut()" title="Zoom Out">−</button>
       <div class="zoom-level" id="zoomLevel">100%</div>
-      <button class="zoom-btn" onclick="zoomIn()">+</button>
-      <button class="zoom-btn" onclick="resetZoom()">⟲</button>
+      <button class="zoom-btn" onclick="zoomIn()" title="Zoom In">+</button>
+      <button class="zoom-btn" onclick="resetZoom()" title="Reset">⟲</button>
     </div>
-    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶</button>
   </div>
 
   <!-- CHANNELS -->
   <div class="channel-section">
     <div class="section-title"><span>📡</span> SELECT CHANNEL</div>
     <div class="category-grid" id="categoryGrid"></div>
-    <div id="subChannelContainer"></div>
   </div>
 
   <!-- FOOTER -->
@@ -197,49 +240,145 @@ html, body { background: var(--dark-bg); color: #fff; font-family: 'Rajdhani', s
 </div>
 
 <script>
-// ===== CHANNEL DATA — ALL YOUR DIRECT LINKS =====
+// ===== ALL YOUR IFRAME LINKS =====
 const channels = {
-  ten: {
-    name: 'TEN',
-    icon: '📺',
-    subChannels: [
-      { name: 'TEN 1 HD', icon: '▶️', quality: 'All Devices', url: 'https://matcheslinkz.pages.dev/TEN1HD' },
-      { name: 'TEN 3 HD', icon: '▶️', quality: 'All Devices', url: 'https://matcheslinkz.pages.dev/TEN3HD' }
-    ]
-  },
   sony: {
     name: 'SONY',
     icon: '📡',
+    color: '#00f0ff',
     subChannels: [
-      { name: 'Sony Hindi', icon: '🇮🇳', quality: 'HD', url: 'https://matcheslinkz.pages.dev/play?id=hindi' },
-      { name: 'Sony English', icon: '🇬🇧', quality: 'HD', url: 'https://matcheslinkz.pages.dev/play?id=eng' }
+      { name: 'Sony Hindi', icon: '🇮🇳', quality: 'HD', url: 'https://allrounder3-0.pages.dev/cricket/sony-3' },
+      { name: 'Sony Liv', icon: '📺', quality: 'HD', url: 'https://allrounder3-0.pages.dev/sony-2' },
+      { name: 'Sony 1', icon: '▶️', quality: 'HD', url: 'https://allrounderlive.pages.dev/sonyliv/sonyliv-1' },
+      { name: 'Sony 3', icon: '▶️', quality: 'HD', url: 'https://cricketstan.github.io/Sony-ten-5/' }
+    ]
+  },
+  star: {
+    name: 'STAR SPORTS',
+    icon: '⭐',
+    color: '#ff6b00',
+    subChannels: [
+      { name: 'Star Hindi', icon: '🇮🇳', quality: 'HD', url: 'https://allrounderlive.in/hindi2' },
+      { name: 'Star Telugu', icon: '🔥', quality: 'HD', url: 'https://allrounder-live4.pages.dev/star/telugu' },
+      { name: 'Star Tamil', icon: '🔥', quality: 'HD', url: 'https://allrounder-live4.pages.dev/star/tamil-1' },
+      { name: 'Star Select', icon: '🇬🇧', quality: 'HD', url: 'https://allrounder3-0.pages.dev/eng' }
     ]
   },
   tnt: {
     name: 'TNT SPORTS',
     icon: '🏏',
+    color: '#ff0033',
     subChannels: [
-      { name: 'TNT Sports 4 HD', icon: '📺', quality: 'HD', url: 'https://matcheslinkz.pages.dev/play/?id=tnt-4' }
+      { name: 'TNT Sports', icon: '📺', quality: 'HD', url: 'https://allrounder3-0.pages.dev/cricket/tnt' },
+      { name: 'TNT Sports 1', icon: '▶️', quality: 'HD', url: 'https://cricketstan.github.io/TNT-1/' }
     ]
   },
   willow: {
     name: 'WILLOW',
     icon: '🌿',
+    color: '#00ff88',
     subChannels: [
-      { name: 'Willow Adsfree HD', icon: '✨', quality: 'Ads Free', url: 'https://matcheslinkz.pages.dev/play/?id=willow' }
+      { name: 'Willow HD', icon: '✨', quality: 'HD', url: 'https://allrounder3-0.pages.dev/cricket/willow' },
+      { name: 'Willow 2', icon: '✨', quality: 'HD', url: 'https://allrounderlive.pages.dev/willow2' },
+      { name: 'Willow Sports', icon: '🏏', quality: 'HD', url: 'https://cricketstan.github.io/Willow-Sports/' }
+    ]
+  },
+  prime: {
+    name: 'PRIME',
+    icon: '👑',
+    color: '#b026ff',
+    subChannels: [
+      { name: 'Prime Hindi', icon: '🇮🇳', quality: 'HD', url: 'https://allrounder-live.pages.dev/channel/prame-hin.html' },
+      { name: 'Prime English', icon: '🇬🇧', quality: 'HD', url: 'https://allrounderlive.in/prime.html' },
+      { name: 'Prime NZ', icon: '🇳🇿', quality: 'HD', url: 'https://hff-cricketstan.wasmer.app/' }
+    ]
+  },
+  sky: {
+    name: 'SKY SPORTS',
+    icon: '☁️',
+    color: '#0088ff',
+    subChannels: [
+      { name: 'Sky UK', icon: '🇬🇧', quality: 'HD', url: 'https://allroundersd.pages.dev/channel/sky-uk' },
+      { name: 'Sky NZ', icon: '🇳🇿', quality: 'HD', url: 'https://crickettv.site/sky-nz/player?id=3' },
+      { name: 'Sky NZ Alt', icon: '🇳🇿', quality: 'HD', url: 'https://allrounder-live12.pages.dev/channel/hub5' }
+    ]
+  },
+  fox: {
+    name: 'FOX CRICKET',
+    icon: '🦊',
+    color: '#ff6b00',
+    subChannels: [
+      { name: 'Fox 501', icon: '📺', quality: 'HD', url: 'https://allrounder-live12.pages.dev/channel/fox1' },
+      { name: 'Fox HD', icon: '▶️', quality: 'HD', url: 'https://cricketstan.github.io/Fox-Cricket-/' }
+    ]
+  },
+  kayo: {
+    name: 'KAYO',
+    icon: '🇦🇺',
+    color: '#00ff88',
+    subChannels: [
+      { name: 'Kayo 1', icon: '📺', quality: 'HD', url: 'https://allrounder-live12.pages.dev/channel/kayo' },
+      { name: 'Kayo 2', icon: '▶️', quality: 'HD', url: 'https://allrounder-live12.pages.dev/channel/kayo-2' }
+    ]
+  },
+  fancode: {
+    name: 'FANCODE',
+    icon: '⚡',
+    color: '#fff200',
+    subChannels: [
+      { name: 'Fancode', icon: '📺', quality: 'HD', url: 'https://allrounder3-0.pages.dev/cricket/fancode' },
+      { name: 'Fancode Live', icon: '▶️', quality: 'HD', url: 'https://allrounder-live4.pages.dev/fancode-player?url=https://in-mc-flive.fancode.com/mumbai/141407_english_hls_ab5ff6c24a21542_1ta-di_h264/1080p.m3u8?hdntl=Expires=1773474245~_GO=Generated~acl=/mumbai/141407_english_hls_ab5ff6c24a21542_1ta-di_h264/*~Signature=AR77L-Yyr9Cdj5X_0so3HpmxTUDWXrASgqUxhTGBOrJaU6SPgB5oUrj5FOVZ7FqeaDZnyCZIHYhGDYKbrr-wcsI214oJ' }
+    ]
+  },
+  zee: {
+    name: 'ZEE',
+    icon: '💠',
+    color: '#b026ff',
+    subChannels: [
+      { name: 'Zee Hindi', icon: '🇮🇳', quality: 'HD', url: 'https://fifa-world-cup-live.pages.dev/hindi.html' },
+      { name: 'Zee English', icon: '🇬🇧', quality: 'HD', url: 'https://fifa-world-cup-live.pages.dev/english' },
+      { name: 'Zee Cinema', icon: '🎬', quality: 'HD', url: 'https://zee-seven.vercel.app/' }
+    ]
+  },
+  hotstar: {
+    name: 'HOTSTAR',
+    icon: '🔥',
+    color: '#ff0033',
+    subChannels: [
+      { name: 'Hotstar', icon: '▶️', quality: 'HD', url: 'https://allrounderlive.pages.dev/dilz?id=dillzy645' },
+      { name: 'Jio Hotstar', icon: '📺', quality: 'HD', url: 'https://allrounder-live7.pages.dev/channel/hotstar' },
+      { name: 'iOS Hotstar', icon: '🍎', quality: 'HD', url: 'https://allrounder-live12.pages.dev/hotstar' }
     ]
   },
   ios: {
     name: 'iOS WORKING',
     icon: '🍎',
+    color: '#00f0ff',
     subChannels: [
-      { name: 'iOS Worldwide', icon: '🌍', quality: 'Global', url: 'https://matcheslinkz.pages.dev/play?id=ios' }
+      { name: 'iOS 2', icon: '📱', quality: 'Global', url: 'https://fifa-world-cup-live.pages.dev/ios.html' },
+      { name: 'iOS 3', icon: '📱', quality: 'Global', url: 'https://allrounder-live12.pages.dev/ios-3' }
+    ]
+  },
+  others: {
+    name: 'OTHERS',
+    icon: '🌍',
+    color: '#ff00a0',
+    subChannels: [
+      { name: 'Asia Cup', icon: '🏆', quality: 'HD', url: 'https://allrounderlive.pages.dev/player?url=https://d3ssd0juqbxbw.cloudfront.net/mtvsinstlive/master.m3u8' },
+      { name: 'TSN', icon: '🇨🇦', quality: 'HD', url: 'https://fifa-world-cup-live.pages.dev/tsn' },
+      { name: 'Channel 7', icon: '🇦🇺', quality: 'HD', url: 'https://allrounderlive.pages.dev/player?url=https://hugh.cdn.rumble.cloud/live/gi29le7p/slot-139/bx1o-9vac_720p/chunklist.m3u8' },
+      { name: 'Myco', icon: '💎', quality: 'HD', url: 'https://allrounder-rho.vercel.app/channel/myco.html' },
+      { name: 'WPL', icon: '🏏', quality: 'HD', url: 'https://allrounderlive.pages.dev/cric-life' },
+      { name: 'Hub', icon: '🔵', quality: 'HD', url: 'https://allrounder-live.pages.dev/channel/hub5' },
+      { name: 'Cricbuzz', icon: '⚡', quality: 'HD', url: 'https://allroundersd.pages.dev/cricbuzz1.html' },
+      { name: 'PTV', icon: '🇵🇰', quality: 'HD', url: 'https://allrounder-live2.pages.dev/channel/ptv' },
+      { name: 'Alt Stream', icon: '🔄', quality: 'HD', url: 'https://allrounderlive.pages.dev/player?url=https://dillzy.cricketstream745.workers.dev/live.m3u8' },
+      { name: 'YouTube', icon: '▶️', quality: 'HD', url: 'https://www.youtube.com/embed/wnlfD625Eqo?autoplay=1' }
     ]
   }
 };
 
 let currentZoom = 100;
-let activeCategory = null;
 
 // PARTICLES
 const particlesContainer = document.getElementById('particles');
@@ -265,29 +404,38 @@ function renderCategories() {
     const btn = document.createElement('div');
     btn.className = 'category-btn';
     btn.dataset.key = key;
-    btn.innerHTML = `<div class="cat-icon">${cat.icon}</div><div class="cat-name">${cat.name}</div><div class="cat-count">${cat.subChannels.length} Channel${cat.subChannels.length > 1 ? 's' : ''}</div>`;
-    btn.onclick = () => toggleCategory(key);
+    btn.innerHTML = `<div class="cat-icon">${cat.icon}</div><div class="cat-name">${cat.name}</div><div class="cat-count">${cat.subChannels.length} Player${cat.subChannels.length > 1 ? 's' : ''}</div>`;
+    btn.onclick = () => openPopup(key);
     grid.appendChild(btn);
   });
 }
 
-// TOGGLE CATEGORY
-function toggleCategory(key) {
-  const container = document.getElementById('subChannelContainer');
-  const allBtns = document.querySelectorAll('.category-btn');
-  if (activeCategory === key) {
-    container.innerHTML = '';
-    activeCategory = null;
-    allBtns.forEach(b => b.classList.remove('active'));
-    return;
-  }
-  allBtns.forEach(b => b.classList.remove('active'));
-  const clickedBtn = document.querySelector(`[data-key="${key}"]`);
-  if (clickedBtn) clickedBtn.classList.add('active');
-  activeCategory = key;
+// OPEN POPUP
+function openPopup(key) {
   const cat = channels[key];
-  container.innerHTML = `<div class="sub-channel-section"><div class="sub-title">🔽 SELECT ${cat.name} CHANNEL</div><div class="sub-grid">${cat.subChannels.map(sub => `<div class="sub-btn" onclick="loadStream('${sub.url}', '${sub.name}')"><span class="sub-icon">${sub.icon}</span><span class="sub-name">${sub.name}</span><span class="sub-quality">${sub.quality}</span></div>`).join('')}</div></div>`;
-  setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+  const overlay = document.getElementById('popupOverlay');
+  const title = document.getElementById('popupTitle');
+  const grid = document.getElementById('popupGrid');
+
+  title.textContent = `CHOOSE ${cat.name} PLAYER`;
+  title.style.color = cat.color;
+
+  grid.innerHTML = cat.subChannels.map(sub => `
+    <div class="popup-btn" onclick="loadStream('${sub.url}', '${sub.name}'); closePopup();">
+      <span class="pop-icon">${sub.icon}</span>
+      <span class="pop-name">${sub.name}</span>
+      <span class="pop-quality">${sub.quality}</span>
+    </div>
+  `).join('');
+
+  overlay.classList.add('active');
+}
+
+// CLOSE POPUP
+function closePopup(e) {
+  if (!e || e.target === document.getElementById('popupOverlay')) {
+    document.getElementById('popupOverlay').classList.remove('active');
+  }
 }
 
 // LOAD STREAM
@@ -301,7 +449,7 @@ function loadStream(url, name) {
 }
 
 function loadDefaultStream() {
-  loadStream('https://matcheslinkz.pages.dev/TEN1HD', 'TEN 1 HD');
+  loadStream('https://allrounder3-0.pages.dev/cricket/sony-3', 'Sony Hindi');
 }
 
 // NOTIFICATION
@@ -330,16 +478,33 @@ function toggleFullscreen() {
   else { document.exitFullscreen(); }
 }
 
+// TELEGRAM POPUP
+function showTgPopup() {
+  document.getElementById('tgPopupOverlay').classList.add('active');
+}
+function closeTgPopup() {
+  document.getElementById('tgPopupOverlay').classList.remove('active');
+  localStorage.setItem('tgPopupShown', 'true');
+}
+
 // KEYBOARD
 document.addEventListener('keydown', (e) => {
   if (e.key === '+' || e.key === '=') zoomIn();
   if (e.key === '-') zoomOut();
   if (e.key === '0') resetZoom();
   if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+  if (e.key === 'Escape') closePopup();
 });
 
 // INIT
 renderCategories();
+
+// Show Telegram popup after 4 seconds (only once per session)
+setTimeout(() => {
+  if (!localStorage.getItem('tgPopupShown')) {
+    showTgPopup();
+  }
+}, 3000);
 
 // ANIMATION STYLE
 const style = document.createElement('style');
