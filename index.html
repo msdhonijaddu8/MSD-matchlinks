@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MSD MATCH LINKS — Live Stream</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&family=Black+Ops+One&family=Russo+One&display=swap" rel="stylesheet">
+<style>
+:root {
+  --neon-cyan: #00f0ff; --neon-pink: #ff00a0; --neon-green: #00ff88;
+  --neon-orange: #ff6b00; --neon-purple: #b026ff; --neon-red: #ff0033;
+  --neon-yellow: #fff200; --neon-blue: #0088ff; --dark-bg: #050508;
+  --accent: #00f0ff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { background: var(--dark-bg); color: #fff; font-family: 'Rajdhani', sans-serif; min-height: 100vh; overflow-x: hidden; touch-action: manipulation; }
+
+/* PARTICLES */
+.bg-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+.particle { position: absolute; width: 2px; height: 2px; border-radius: 50%; animation: float 10s infinite ease-in-out; opacity: 0.4; }
+@keyframes float { 0%,100%{transform:translateY(0)translateX(0);opacity:0.2} 50%{transform:translateY(-150px)translateX(80px);opacity:0.8} }
+
+/* SCANLINES */
+.scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,240,255,0.015) 3px,rgba(0,240,255,0.015) 6px); pointer-events: none; z-index: 9998; }
+
+/* MAIN */
+.main-container { position: relative; z-index: 1; max-width: 100%; }
+
+/* TOP BAR */
+.top-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; background: rgba(0,0,0,0.85); border-bottom: 1px solid rgba(0,240,255,0.15); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(15px); }
+.top-bar-left { display: flex; align-items: center; gap: 12px; }
+.close-btn { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,0,51,0.15); border: 1px solid var(--neon-red); color: var(--neon-red); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+.close-btn:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 15px var(--neon-red); }
+.live-title { font-family: 'Orbitron', monospace; font-size: 1rem; color: #fff; line-height: 1.3; }
+.live-title span { color: var(--neon-green); font-size: 0.7rem; letter-spacing: 2px; font-family: 'Share Tech Mono', monospace; }
+.on-air { display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(255,0,51,0.12); border: 1px solid var(--neon-red); border-radius: 20px; font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: var(--neon-red); }
+.on-air .pulse-dot { width: 7px; height: 7px; background: var(--neon-red); border-radius: 50%; animation: pulse-live 1s infinite; }
+@keyframes pulse-live { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.2;transform:scale(1.6)} }
+.top-bar-right { display: flex; align-items: center; gap: 8px; }
+.menu-btn { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+.menu-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px var(--accent); }
+
+/* TELEGRAM */
+.telegram-section { padding: 12px 15px; background: linear-gradient(90deg, rgba(0,136,204,0.08), rgba(0,136,204,0.03)); border-bottom: 1px solid rgba(0,136,204,0.15); }
+.telegram-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 480px; margin: 0 auto; padding: 12px 25px; background: linear-gradient(135deg, #0088cc, #005580); border: 2px solid rgba(0,240,255,0.25); border-radius: 50px; color: #fff; font-family: 'Orbitron', monospace; font-size: 0.9rem; font-weight: 700; text-decoration: none; cursor: pointer; transition: all 0.4s ease; position: relative; overflow: hidden; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 15px rgba(0,136,204,0.25); }
+.telegram-btn::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.12), transparent); transform: rotate(45deg); animation: shine 3s infinite; }
+@keyframes shine { 0%{transform:translateX(-100%)translateY(-100%)rotate(45deg)} 100%{transform:translateX(100%)translateY(100%)rotate(45deg)} }
+.telegram-btn:hover { transform: scale(1.02); box-shadow: 0 0 35px rgba(0,136,204,0.5), 0 0 70px rgba(0,136,204,0.15); border-color: var(--neon-cyan); }
+.telegram-btn:active { transform: scale(0.97); }
+.telegram-icon { width: 28px; height: 28px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; z-index: 1; }
+.telegram-text { z-index: 1; }
+
+/* VIDEO */
+.video-section { position: relative; width: 100%; background: #000; overflow: hidden; }
+.video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; background: linear-gradient(135deg, #080810, #120820); overflow: hidden; }
+.video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+.video-placeholder { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #080810, #120820); }
+.video-placeholder .play-icon { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue)); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 25px rgba(0,240,255,0.35); animation: pulse-play 2s infinite; }
+@keyframes pulse-play { 0%,100%{box-shadow:0 0 25px rgba(0,240,255,0.35);transform:scale(1)} 50%{box-shadow:0 0 45px rgba(0,240,255,0.6);transform:scale(1.06)} }
+.video-placeholder .play-icon:hover { transform: scale(1.15); box-shadow: 0 0 55px rgba(0,240,255,0.8); }
+.video-placeholder .stream-text { margin-top: 15px; font-family: 'Orbitron', monospace; font-size: 1rem; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
+.video-placeholder .stream-sub { margin-top: 6px; font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+
+/* ZOOM */
+.zoom-controls { position: absolute; bottom: 12px; right: 12px; display: flex; gap: 6px; z-index: 10; }
+.zoom-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(0,0,0,0.75); border: 1px solid rgba(0,240,255,0.25); color: var(--neon-cyan); font-family: 'Orbitron', monospace; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; backdrop-filter: blur(8px); }
+.zoom-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
+.zoom-level { width: 46px; height: 36px; border-radius: 8px; background: rgba(0,0,0,0.75); border: 1px solid rgba(0,240,255,0.25); color: var(--neon-cyan); font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+.fullscreen-btn { position: absolute; bottom: 12px; left: 12px; width: 36px; height: 36px; border-radius: 8px; background: rgba(0,0,0,0.75); border: 1px solid rgba(0,240,255,0.25); color: var(--neon-cyan); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; backdrop-filter: blur(8px); z-index: 10; }
+.fullscreen-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
+
+/* CHANNELS */
+.channel-section { padding: 15px; }
+.section-title { font-family: 'Orbitron', monospace; font-size: 0.85rem; color: var(--accent); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 3px; display: flex; align-items: center; gap: 8px; }
+.category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.category-btn { padding: 14px 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: #fff; cursor: pointer; transition: all 0.35s; text-align: center; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.category-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0,240,255,0.08), transparent); transition: left 0.6s; }
+.category-btn:hover::before { left: 100%; }
+.category-btn:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,240,255,0.1); }
+.category-btn.active { border-color: var(--neon-green); background: rgba(0,255,136,0.08); box-shadow: 0 0 20px rgba(0,255,136,0.15); }
+.category-btn .cat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); }
+.category-btn:hover .cat-icon { border-color: var(--accent); box-shadow: 0 0 15px rgba(0,240,255,0.15); }
+.category-btn .cat-name { font-family: 'Orbitron', monospace; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; }
+.category-btn .cat-count { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.4); }
+
+/* SUB */
+.sub-channel-section { margin-top: 12px; padding: 12px; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid rgba(0,240,255,0.1); animation: slideDown 0.3s ease; }
+@keyframes slideDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+.sub-title { font-family: 'Orbitron', monospace; font-size: 0.75rem; color: var(--neon-orange); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
+.sub-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.sub-btn { padding: 12px 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; color: #fff; cursor: pointer; transition: all 0.3s; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.sub-btn:hover { border-color: var(--neon-green); background: rgba(0,255,136,0.06); transform: translateY(-2px); }
+.sub-btn .sub-icon { font-size: 1.4rem; }
+.sub-btn .sub-name { font-family: 'Rajdhani', sans-serif; font-size: 0.8rem; font-weight: 700; }
+.sub-btn .sub-quality { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: var(--neon-green); }
+
+/* FOOTER */
+.footer { padding: 18px 15px; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.9)); border-top: 1px solid rgba(255,255,255,0.04); margin-top: 15px; }
+.footer-content { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.dev-badge { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; justify-content: center; }
+.dev-name { font-family: 'Black Ops One', cursive; font-size: 0.95rem; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; filter: drop-shadow(0 0 6px rgba(0,240,255,0.4)); }
+.dev-name .label { font-family: 'Share Tech Mono', monospace; font-size: 0.55rem; color: rgba(255,255,255,0.35); -webkit-text-fill-color: rgba(255,255,255,0.35); display: block; text-align: center; letter-spacing: 3px; margin-bottom: 1px; }
+.divider { width: 2px; height: 28px; background: linear-gradient(180deg, transparent, var(--neon-orange), transparent); }
+.manager-name { font-family: 'Russo One', sans-serif; font-size: 0.95rem; background: linear-gradient(90deg, var(--neon-orange), var(--neon-red), var(--neon-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; filter: drop-shadow(0 0 6px rgba(255,107,0,0.4)); }
+.manager-name .label { font-family: 'Share Tech Mono', monospace; font-size: 0.55rem; color: rgba(255,255,255,0.35); -webkit-text-fill-color: rgba(255,255,255,0.35); display: block; text-align: center; letter-spacing: 3px; margin-bottom: 1px; }
+.footer-brand { font-family: 'Orbitron', monospace; font-size: 0.65rem; color: rgba(255,255,255,0.15); letter-spacing: 4px; text-transform: uppercase; }
+
+/* LOADING */
+.loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 15px; z-index: 10000; }
+.loading-overlay.active { display: flex; }
+.loading-spinner { width: 50px; height: 50px; border: 3px solid rgba(0,240,255,0.1); border-top-color: var(--neon-cyan); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-family: 'Orbitron', monospace; font-size: 0.9rem; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: #050508; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+/* RESPONSIVE */
+@media (max-width: 400px) {
+  .category-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .sub-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .telegram-btn { font-size: 0.8rem; padding: 10px 18px; }
+  .category-btn { padding: 12px 8px; }
+  .category-btn .cat-icon { width: 38px; height: 38px; font-size: 1.3rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-particles" id="particles"></div>
+<div class="scanlines"></div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">CONNECTING STREAM...</div>
+</div>
+
+<div class="main-container">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <button class="close-btn" onclick="window.close()">✕</button>
+      <div class="live-title">Live Stream<br><span>msd-cricketlinks07.pages.dev</span></div>
+    </div>
+    <div class="on-air"><div class="pulse-dot"></div>ON AIR</div>
+    <div class="top-bar-right"><button class="menu-btn">✓</button><button class="menu-btn">⋮</button></div>
+  </div>
+
+  <!-- TELEGRAM -->
+  <div class="telegram-section">
+    <a href="https://t.me/MSD_matchlinks" target="_blank" class="telegram-btn">
+      <span class="telegram-icon">✈️</span>
+      <span class="telegram-text">Join @MSD-matchlinks</span>
+    </a>
+  </div>
+
+  <!-- VIDEO -->
+  <div class="video-section" id="videoSection">
+    <div class="video-wrapper" id="videoWrapper">
+      <div class="video-placeholder" id="videoPlaceholder">
+        <div class="play-icon" onclick="loadDefaultStream()">▶</div>
+        <div class="stream-text">SELECT CHANNEL TO START</div>
+        <div class="stream-sub">MSD MATCH LINKS — HD STREAMING</div>
+      </div>
+    </div>
+    <div class="zoom-controls">
+      <button class="zoom-btn" onclick="zoomOut()">−</button>
+      <div class="zoom-level" id="zoomLevel">100%</div>
+      <button class="zoom-btn" onclick="zoomIn()">+</button>
+      <button class="zoom-btn" onclick="resetZoom()">⟲</button>
+    </div>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶</button>
+  </div>
+
+  <!-- CHANNELS -->
+  <div class="channel-section">
+    <div class="section-title"><span>📡</span> SELECT CHANNEL</div>
+    <div class="category-grid" id="categoryGrid"></div>
+    <div id="subChannelContainer"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-content">
+      <div class="dev-badge">
+        <div class="dev-name"><span class="label">👨‍💻 DEVELOPER</span>MSD-KARAN</div>
+        <div class="divider"></div>
+        <div class="manager-name"><span class="label">📋 MANAGER</span>ARVIND</div>
+      </div>
+      <div class="footer-brand">MSD MATCH LINKS © 2026</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== CHANNEL DATA — ALL YOUR DIRECT LINKS =====
+const channels = {
+  ten: {
+    name: 'TEN',
+    icon: '📺',
+    subChannels: [
+      { name: 'TEN 1 HD', icon: '▶️', quality: 'All Devices', url: 'https://matcheslinkz.pages.dev/TEN1HD' },
+      { name: 'TEN 3 HD', icon: '▶️', quality: 'All Devices', url: 'https://matcheslinkz.pages.dev/TEN3HD' }
+    ]
+  },
+  sony: {
+    name: 'SONY',
+    icon: '📡',
+    subChannels: [
+      { name: 'Sony Hindi', icon: '🇮🇳', quality: 'HD', url: 'https://matcheslinkz.pages.dev/play?id=hindi' },
+      { name: 'Sony English', icon: '🇬🇧', quality: 'HD', url: 'https://matcheslinkz.pages.dev/play?id=eng' }
+    ]
+  },
+  tnt: {
+    name: 'TNT SPORTS',
+    icon: '🏏',
+    subChannels: [
+      { name: 'TNT Sports 4 HD', icon: '📺', quality: 'HD', url: 'https://matcheslinkz.pages.dev/play/?id=tnt-4' }
+    ]
+  },
+  willow: {
+    name: 'WILLOW',
+    icon: '🌿',
+    subChannels: [
+      { name: 'Willow Adsfree HD', icon: '✨', quality: 'Ads Free', url: 'https://matcheslinkz.pages.dev/play/?id=willow' }
+    ]
+  },
+  ios: {
+    name: 'iOS WORKING',
+    icon: '🍎',
+    subChannels: [
+      { name: 'iOS Worldwide', icon: '🌍', quality: 'Global', url: 'https://matcheslinkz.pages.dev/play?id=ios' }
+    ]
+  }
+};
+
+let currentZoom = 100;
+let activeCategory = null;
+
+// PARTICLES
+const particlesContainer = document.getElementById('particles');
+const colors = ['#00f0ff','#ff00a0','#00ff88','#b026ff','#ff6b00','#0088ff'];
+for (let i = 0; i < 50; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.top = Math.random() * 100 + '%';
+  p.style.animationDelay = Math.random() * 10 + 's';
+  p.style.animationDuration = (5 + Math.random() * 8) + 's';
+  p.style.background = colors[Math.floor(Math.random() * colors.length)];
+  p.style.width = (1 + Math.random() * 3) + 'px';
+  p.style.height = p.style.width;
+  particlesContainer.appendChild(p);
+}
+
+// RENDER CATEGORIES
+function renderCategories() {
+  const grid = document.getElementById('categoryGrid');
+  grid.innerHTML = '';
+  Object.entries(channels).forEach(([key, cat]) => {
+    const btn = document.createElement('div');
+    btn.className = 'category-btn';
+    btn.dataset.key = key;
+    btn.innerHTML = `<div class="cat-icon">${cat.icon}</div><div class="cat-name">${cat.name}</div><div class="cat-count">${cat.subChannels.length} Channel${cat.subChannels.length > 1 ? 's' : ''}</div>`;
+    btn.onclick = () => toggleCategory(key);
+    grid.appendChild(btn);
+  });
+}
+
+// TOGGLE CATEGORY
+function toggleCategory(key) {
+  const container = document.getElementById('subChannelContainer');
+  const allBtns = document.querySelectorAll('.category-btn');
+  if (activeCategory === key) {
+    container.innerHTML = '';
+    activeCategory = null;
+    allBtns.forEach(b => b.classList.remove('active'));
+    return;
+  }
+  allBtns.forEach(b => b.classList.remove('active'));
+  const clickedBtn = document.querySelector(`[data-key="${key}"]`);
+  if (clickedBtn) clickedBtn.classList.add('active');
+  activeCategory = key;
+  const cat = channels[key];
+  container.innerHTML = `<div class="sub-channel-section"><div class="sub-title">🔽 SELECT ${cat.name} CHANNEL</div><div class="sub-grid">${cat.subChannels.map(sub => `<div class="sub-btn" onclick="loadStream('${sub.url}', '${sub.name}')"><span class="sub-icon">${sub.icon}</span><span class="sub-name">${sub.name}</span><span class="sub-quality">${sub.quality}</span></div>`).join('')}</div></div>`;
+  setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+}
+
+// LOAD STREAM
+function loadStream(url, name) {
+  const wrapper = document.getElementById('videoWrapper');
+  const loading = document.getElementById('loadingOverlay');
+  loading.classList.add('active');
+  wrapper.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay; fullscreen" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>`;
+  setTimeout(() => loading.classList.remove('active'), 2000);
+  showNotification(`▶️ ${name} — STREAM STARTED`);
+}
+
+function loadDefaultStream() {
+  loadStream('https://matcheslinkz.pages.dev/TEN1HD', 'TEN 1 HD');
+}
+
+// NOTIFICATION
+function showNotification(text) {
+  const notif = document.createElement('div');
+  notif.style.cssText = `position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(0,255,136,0.15);border:1px solid var(--neon-green);color:var(--neon-green);padding:10px 22px;border-radius:25px;font-family:'Orbitron',monospace;font-size:0.8rem;z-index:10001;animation:fadeInOut 2.5s forwards;white-space:nowrap;`;
+  notif.textContent = text;
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 2500);
+}
+
+// ZOOM
+function zoomIn() { if (currentZoom < 200) { currentZoom += 10; applyZoom(); } }
+function zoomOut() { if (currentZoom > 50) { currentZoom -= 10; applyZoom(); } }
+function resetZoom() { currentZoom = 100; applyZoom(); }
+function applyZoom() {
+  document.getElementById('videoWrapper').style.transform = `scale(${currentZoom/100})`;
+  document.getElementById('videoWrapper').style.transition = 'transform 0.3s ease';
+  document.getElementById('zoomLevel').textContent = currentZoom + '%';
+}
+
+// FULLSCREEN
+function toggleFullscreen() {
+  const elem = document.getElementById('videoSection');
+  if (!document.fullscreenElement) { elem.requestFullscreen().catch(() => {}); }
+  else { document.exitFullscreen(); }
+}
+
+// KEYBOARD
+document.addEventListener('keydown', (e) => {
+  if (e.key === '+' || e.key === '=') zoomIn();
+  if (e.key === '-') zoomOut();
+  if (e.key === '0') resetZoom();
+  if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+});
+
+// INIT
+renderCategories();
+
+// ANIMATION STYLE
+const style = document.createElement('style');
+style.textContent = `@keyframes fadeInOut { 0%{opacity:0;transform:translateX(-50%)translateY(-15px)} 15%{opacity:1;transform:translateX(-50%)translateY(0)} 85%{opacity:1;transform:translateX(-50%)translateY(0)} 100%{opacity:0;transform:translateX(-50%)translateY(-15px)} }`;
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>
